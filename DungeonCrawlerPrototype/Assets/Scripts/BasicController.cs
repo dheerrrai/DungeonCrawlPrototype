@@ -11,7 +11,10 @@ public class BasicController : MonoBehaviour
     [SerializeField] public Rigidbody playerRb;
     [SerializeField] private float rotateSpeed = 50f;
     [SerializeField] private float dampAmt = 8f;
-
+    public GameObject projectileParticle;
+    public Transform projectileLocation;
+    public bool lockedOn = false;
+    public Transform targetLock;
     
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -40,14 +43,25 @@ public class BasicController : MonoBehaviour
         Vector3 targetVel = inputDir.normalized * moveSpeed;
 
         // Rotation
-        if (inputDir.sqrMagnitude > 0.01f)
+        if (inputDir.sqrMagnitude > 0.01f && !lockedOn)
         {
-            Quaternion targetRot = Quaternion.LookRotation(-inputDir);
+            Quaternion targetRot = Quaternion.LookRotation(inputDir);
             playerRb.MoveRotation(Quaternion.RotateTowards(
                 playerRb.rotation,
                 targetRot,
                 rotateSpeed * Time.deltaTime
             ));
+        }
+        else if(lockedOn)
+        {
+            if(targetLock != null)
+            {
+                transform.LookAt(targetLock);
+            }
+            else
+            {
+                Debug.Log("TargetNotGiven");
+            }
         }
 
         // Movement - Cam Relative
@@ -65,6 +79,15 @@ public class BasicController : MonoBehaviour
             // Apply desired velocity force once
             Vector3 velError = targetVel - playerRb.linearVelocity;
             playerRb.AddForce(velError, ForceMode.Force);
+        }
+        
+    }
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.F))
+        {
+            GameObject rangedAttack = Instantiate(projectileParticle, projectileLocation.position, projectileLocation.rotation);
+
         }
     }
 

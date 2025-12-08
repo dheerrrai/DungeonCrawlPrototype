@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Unity.Cinemachine;
 using UnityEngine.UIElements;
 
-[RequireComponent(typeof(CinemachineCamera))]
+
 public class LockOnLogic : MonoBehaviour
 {
     public Transform SearchableObject;
@@ -15,11 +15,12 @@ public class LockOnLogic : MonoBehaviour
     [SerializeField]private int range;
     [SerializeField] private int index=0;
     public Transform lookAtTarget;
+    public BasicController controller;
     public void Start()
     {
         cam.Target.TrackingTarget = player;
         cam.Target.LookAtTarget = lookAtTarget;
-        //cam.ta
+        controller.lockedOn = false;
         lockOns.Clear();
         lockOns.Add(player);
 
@@ -45,17 +46,23 @@ public class LockOnLogic : MonoBehaviour
     public void Update()
     {
         if (Input.GetKeyDown(KeyCode.R)) 
-        {
+        {   
+
             index++;
 
             if (index >= lockOns.Count)
                 index = 0;
 
-            if (index == 0)
-                lookAtTarget = player;            // default
-            else
-                lookAtTarget = lockOns[index];    // switch enemy
-
+            if (index == 0){
+                lookAtTarget = player; // default
+                controller.lockedOn = false;
+            }
+            else{
+                lookAtTarget = lockOns[index];
+                controller.lockedOn = true;
+                controller.targetLock = lookAtTarget;
+                // switch enemy
+            }
             cam.Target.LookAtTarget = lookAtTarget;
 
         }
