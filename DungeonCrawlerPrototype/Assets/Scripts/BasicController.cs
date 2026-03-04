@@ -1,33 +1,64 @@
+using System.Collections.Generic;
+
 using UnityEngine;
 
 
 public class BasicController : MonoBehaviour
 {
-    [SerializeField] private float moveSpeed = 25f;
+    [Header("Player Stats")]
     [SerializeField] private int EXP;
     [SerializeField] private int health;
     [SerializeField] private int maxHealth = 100;
     [SerializeField] public Transform player;
     [SerializeField] public Rigidbody playerRb;
+    [Header("Movement Stats")]
+    public float dashForce = 10f;
+    public float dashCD = 0f;
+
+
+    [SerializeField] private float moveSpeed = 25f;
     [SerializeField] private float rotateSpeed = 50f;
     [SerializeField] private float dampAmt = 8f;
-    public GameObject projectileParticle;
-    public Transform projectileLocation;
+    [SerializeField] private float jumpForce=100f;
+    public bool CanJump = false;
+
     public bool lockedOn = false;
+
     public Transform targetLock;
+
+
+    [Header("References for functions")]
+
+    public string groundTag = "Ground";
+
+    public GameObject projectileParticle;
+    public GameObject projectileParent;
+    public List<GameObject> projectile = new();
+    public Transform projectileLocation;
     
+    
+
+
+    float horInput;
+    float verInput;
+    Vector3 inputDir;
+
+    public int lockOnIndex = 0;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         health = maxHealth;
+        for (int i = 0; i < projectileParent.transform.childCount; i++)
+        {
+            projectile.Add(projectileParent.transform.GetChild(i).gameObject);
+            Debug.Log("Added Child");
+        }
     }
 
     // Update is called once per frame
     void FixedUpdate()
     {
-        float horInput = Input.GetAxisRaw("Horizontal");
-        float verInput = Input.GetAxisRaw("Vertical");
-
+      
         // Camera Values
         Vector3 camForward = Camera.main.transform.forward;
         Vector3 camRight = Camera.main.transform.right;
@@ -39,7 +70,7 @@ public class BasicController : MonoBehaviour
         camRight.Normalize();
 
         // Movement Calcs
-        Vector3 inputDir = (camForward * verInput) + (camRight * horInput);
+        inputDir = (camForward * verInput) + (camRight * horInput);
         Vector3 targetVel = inputDir.normalized * moveSpeed;
 
         // Rotation
@@ -64,10 +95,11 @@ public class BasicController : MonoBehaviour
             }
         }
 
-        // Movement - Cam Relative
+        // Movement becoming Camera Relative
         if (inputDir.sqrMagnitude < 0.01f)
         {
             // Smooth stop
+
             playerRb.linearVelocity = Vector3.Lerp(
                 playerRb.linearVelocity,
                 Vector3.zero,
@@ -76,7 +108,8 @@ public class BasicController : MonoBehaviour
         }
         else
         {
-            // Apply desired velocity force once
+            // Apply desired velocity force
+
             Vector3 velError = targetVel - playerRb.linearVelocity;
             playerRb.AddForce(velError, ForceMode.Force);
         }
@@ -84,11 +117,51 @@ public class BasicController : MonoBehaviour
     }
     private void Update()
     {
+        horInput = Input.GetAxisRaw("Horizontal");
+        verInput = Input.GetAxisRaw("Vertical");
+
         if (Input.GetKeyDown(KeyCode.F))
         {
-            GameObject rangedAttack = Instantiate(projectileParticle, projectileLocation.position, projectileLocation.rotation);
-
+            ParticleHandle();   
         }
+        if (Input.GetKeyDown(KeyCode.Space) && CanJump)
+        {
+            Jump();
+        }
+        if (playerRb.linearVelocity.y > 0)
+        {
+            CanJump = false;
+        }
+        if (Input.GetKeyDown(KeyCode.LeftShift) && dashCD > 5f)
+        {
+            dashCD = 0f;
+            playerRb.AddForce(inputDir * dashForce, ForceMode.VelocityChange);
+        }
+        else
+        {
+            dashCD += Time.deltaTime;
+        }
+    }
+    
+    public void Jump()
+    {
+        playerRb.AddForce (new Vector3(0,jumpForce,0), ForceMode.Force);
+    }
+
+    
+    
+    public void ParticleHandle()
+    {
+        
+        if (lockOnIndex >= projectile.Count)
+        {
+            lockOnIndex = 0;
+        }
+        
+        projectile[lockOnIndex].transform.position = projectileLocation.position;
+        projectile[lockOnIndex].transform.rotation = projectileLocation.rotation;
+        projectile[lockOnIndex].SetActive(true);
+        { lockOnIndex += 1; }
     }
 
 }
