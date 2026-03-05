@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 
 using UnityEngine;
@@ -6,9 +7,7 @@ using UnityEngine;
 public class BasicController : MonoBehaviour
 {
     [Header("Player Stats")]
-    [SerializeField] private int EXP;
-    [SerializeField] private int health;
-    [SerializeField] private int maxHealth = 100;
+    [SerializeField] PlayerStats playerStats;
     [SerializeField] public Transform player;
     [SerializeField] public Rigidbody playerRb;
     [Header("Movement Stats")]
@@ -25,6 +24,11 @@ public class BasicController : MonoBehaviour
     public bool lockedOn = false;
 
     public Transform targetLock;
+
+    [Header("Events")]
+    public Action attackAction;
+    public Action takeDamage;
+    public Action jumpAction;
 
 
     [Header("References for functions")]
@@ -47,7 +51,7 @@ public class BasicController : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        health = maxHealth;
+        
         for (int i = 0; i < projectileParent.transform.childCount; i++)
         {
             projectile.Add(projectileParent.transform.GetChild(i).gameObject);
@@ -161,7 +165,7 @@ public class BasicController : MonoBehaviour
         projectile[lockOnIndex].transform.position = projectileLocation.position;
         projectile[lockOnIndex].transform.rotation = projectileLocation.rotation;
         projectile[lockOnIndex].SetActive(true);
-        { lockOnIndex += 1; }
+        lockOnIndex += 1;
     }
 
 }
