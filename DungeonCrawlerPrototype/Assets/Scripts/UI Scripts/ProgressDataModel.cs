@@ -1,6 +1,7 @@
 using System;
 
 namespace Stats{
+    [Serializable]
 public class ProgressModel
 {
     public event Action<int, int> onValueChanged;

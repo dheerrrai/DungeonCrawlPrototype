@@ -4,15 +4,17 @@ namespace Stats
 {
 public class PlayerStats : MonoBehaviour
 {
-    [SerializeField] private ProgressModel health;
-    [SerializeField] private int startingMaxHp;
+    [SerializeField] public ProgressModel health;
+    [SerializeField] public int startingMaxHp;
 
-    [SerializeField] private ProgressModel mana;
-    [SerializeField] private int startingMaxMp;
+    [SerializeField] public ProgressModel mana;
+    [SerializeField] public int startingMaxMp;
+    public int attackManaReq;
 
-    [SerializeField] private ProgressModel exp;
-    [SerializeField] private int levelReq;
-
+    public int level;
+    [SerializeField] public ProgressModel exp;
+    [SerializeField] public int levelReq;
+     public int BaseDamage;
 
     [SerializeField] private ImageFillPresenter healthPresenter;
     [SerializeField] private ImageFillPresenter manaPresenter;
@@ -58,5 +60,7 @@ public class PlayerStats : MonoBehaviour
     {
         mana.ChangeValue(amount);
     }
+
+
 }
 }

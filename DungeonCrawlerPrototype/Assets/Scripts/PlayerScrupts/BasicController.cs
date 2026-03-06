@@ -1,7 +1,8 @@
 using System;
 using System.Collections.Generic;
-
+using UnityEditor.U2D;
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace Stats
 {
@@ -27,10 +28,10 @@ namespace Stats
         public Transform targetLock;
 
         [Header("Events")]
-        public Action<int> attackAction;
-        public Action<int> takeDamage;
-        public Action<int> heal;
-        public Action jumpAction;
+        public UnityEvent<int> attackAction;
+        public UnityEvent<int> takeDamage;
+        public UnityEvent<int> heal;
+        //public Action jumpAction;
         //S
 
         [Header("References for functions")]
@@ -42,7 +43,7 @@ namespace Stats
         public List<GameObject> projectile = new();
         public Transform projectileLocation;
 
-
+        public LockOnLogic lockOnScript;
 
 
         float horInput;
@@ -53,7 +54,8 @@ namespace Stats
 
         void Start()
         {
-
+            
+            
             for (int i = 0; i < projectileParent.transform.childCount; i++)
             {
                 projectile.Add(projectileParent.transform.GetChild(i).gameObject);
@@ -80,7 +82,7 @@ namespace Stats
             Vector3 targetVel = inputDir.normalized * moveSpeed;
 
             // Rotation
-            if (inputDir.sqrMagnitude > 0.01f && !lockedOn)
+            if (inputDir.sqrMagnitude > 0.01f && !lockOnScript.isLockedOn)
             {
                 Quaternion targetRot = Quaternion.LookRotation(inputDir);
                 playerRb.MoveRotation(Quaternion.RotateTowards(
@@ -89,11 +91,11 @@ namespace Stats
                     rotateSpeed * Time.deltaTime
                 ));
             }
-            else if (lockedOn)
+            else if (lockOnScript.isLockedOn)
             {
                 if (targetLock != null)
                 {
-                    transform.LookAt(targetLock);
+                    transform.LookAt(lockOnScript.lookAtTarget);
                 }
                 else
                 {
@@ -126,9 +128,10 @@ namespace Stats
             horInput = Input.GetAxisRaw("Horizontal");
             verInput = Input.GetAxisRaw("Vertical");
 
-            if (Input.GetKeyDown(KeyCode.F))
+            if (Input.GetKeyDown(KeyCode.F) && CheckforMana(playerStats))
             {
-                ParticleHandle();
+                attackAction.Invoke(playerStats.BaseDamage * playerStats.level);
+
             }
             if (Input.GetKeyDown(KeyCode.Space) && CanJump)
             {
@@ -154,6 +157,29 @@ namespace Stats
             playerRb.AddForce(new Vector3(0, jumpForce, 0), ForceMode.Force);
         }
 
+
+        public bool CheckforMana(PlayerStats stats)
+        {
+            if (stats != null)
+            {
+                if(stats.mana.currentVal >= stats.attackManaReq)
+                {
+                    stats.mana.ChangeValue(-stats.attackManaReq);
+                    return true;
+                }
+                else
+                {
+                    Debug.Log("NotEnoughMana");
+                    return false;
+                }
+
+                
+            }
+            else
+            {
+                return false;
+            }
+        }
 
 
         public void ParticleHandle()

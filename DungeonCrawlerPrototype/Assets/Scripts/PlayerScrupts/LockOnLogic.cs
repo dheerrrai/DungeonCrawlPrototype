@@ -7,22 +7,23 @@ namespace Stats{
 public class LockOnLogic : MonoBehaviour
 {
     public Transform SearchableObject;
-    public Transform behindCam;
-    public Transform player;
+    public Transform defaultTarget;
     public GameObject lockonIcon;
     public List<Transform> lockOns = new List<Transform>();
+    public bool isLockedOn = false;
     public CinemachineCamera cam;
     [SerializeField] private int range;
     [SerializeField] private int index = 0;
     public Transform lookAtTarget;
-    public BasicController controller;
+
+    //public BasicController controller;
     public void Start()
     {
-        cam.Target.TrackingTarget = player;
+        cam.Target.TrackingTarget = defaultTarget;
         cam.Target.LookAtTarget = lookAtTarget;
-        controller.lockedOn = false;
-        lockOns.Clear();
-        lockOns.Add(player);
+        isLockedOn = false;
+            lockOns.Clear();
+        lockOns.Add(defaultTarget);
 
         SearchNAdd();
     }
@@ -30,7 +31,7 @@ public class LockOnLogic : MonoBehaviour
     {
         SearchNAdd();
     }
-    public void SearchNAdd()
+    public void SearchNAdd() //Searches through Searchable Parent and finds all children and 
     {
         foreach (Transform childTransform in SearchableObject)
         {
@@ -54,15 +55,13 @@ public class LockOnLogic : MonoBehaviour
                 index = 0;
 
             if (index == 0) {
-                lookAtTarget = player; // default
-                controller.lockedOn = false;
+                lookAtTarget = defaultTarget; // default
+                    isLockedOn = false;
             }
             else {
                 lookAtTarget = lockOns[index];
-                controller.lockedOn = true;
-                controller.targetLock = lookAtTarget;
-                // switch enemy
-            }
+                    isLockedOn = true;
+                }
             cam.Target.LookAtTarget = lookAtTarget;
 
         }
