@@ -1,6 +1,8 @@
 using UnityEngine;
 using UnityEngine.UI;
 
+namespace Stats
+{
 public class ImageFillPresenter : ValuePresenter
 {
     [SerializeField] Image FillImage;
@@ -10,13 +12,14 @@ public class ImageFillPresenter : ValuePresenter
         FillImage = fillUI;
     }
 
-    public void Initialise( ProgressModel model)
+    public void Initialise(ProgressModel model)
     {
         model.onValueChanged += Present;
     }
 
     public override void Present(int current, int max)
     {
-        FillImage.fillAmount = (float) current / max;
+        FillImage.fillAmount = (float)current / max;
     }
+}
 }

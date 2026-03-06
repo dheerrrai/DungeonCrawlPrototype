@@ -1,6 +1,7 @@
 using UnityEngine;
-using UnityEngine.UI;
 
+namespace Stats
+{
 public class PlayerStats : MonoBehaviour
 {
     [SerializeField] private ProgressModel health;
@@ -17,21 +18,19 @@ public class PlayerStats : MonoBehaviour
     [SerializeField] private ImageFillPresenter manaPresenter;
     [SerializeField] private ImageFillPresenter xpPresenter;
 
-    //[SerializeField] private Image healthFill;
-    //[SerializeField] private Image manaFill;
-    //[SerializeField] private Image expFill;
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Awake()
     {
         health = CreateUIFrame(healthPresenter, startingMaxHp);
         mana = CreateUIFrame(manaPresenter, startingMaxMp);
-        exp  = CreateUIFrame(xpPresenter, levelReq, false);
+        exp = CreateUIFrame(xpPresenter, levelReq, false);
+
+        //Initiates the 3 Main Player Stats
     }
 
-    ProgressModel CreateUIFrame(ImageFillPresenter presenter, int max,bool startingFull = true)
+    ProgressModel CreateUIFrame(ImageFillPresenter presenter, int max, bool startingFull = true)
     {
         ProgressModel model = new ProgressModel(max, startingFull);
-        
+
         presenter.Initialise(model);
         model.ChangeValue(0);
         return model;
@@ -59,4 +58,5 @@ public class PlayerStats : MonoBehaviour
     {
         mana.ChangeValue(amount);
     }
+}
 }

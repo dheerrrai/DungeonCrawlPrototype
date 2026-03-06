@@ -1,5 +1,6 @@
 using UnityEngine;
-
+namespace Stats
+{
 public class groundCheck : MonoBehaviour
 {
     public string GroundTag;
@@ -12,4 +13,5 @@ public class groundCheck : MonoBehaviour
         }
     }
     //public OnTrigger
+}
 }

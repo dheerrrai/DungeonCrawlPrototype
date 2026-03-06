@@ -1,6 +1,6 @@
 using System;
 
-
+namespace Stats{
 public class ProgressModel
 {
     public event Action<int, int> onValueChanged;
@@ -9,28 +9,28 @@ public class ProgressModel
 
     public int currentVal { get; private set; }
     public int maxVal { get; private set; }
-    
-    
+
+
     public ProgressModel(int max, bool StartFull = true)
     {
         maxVal = max;
         currentVal = StartFull ? max : 0;
-       
+
 
     }
 
     public void ChangeValue(int amount) //Any Modifications can be calling this instead of hard coding the logic
     {
-        int previousVal= currentVal;
+        int previousVal = currentVal;
         currentVal += amount;
         currentVal = Math.Clamp(currentVal, 0, maxVal);
 
         onValueChanged?.Invoke(currentVal, maxVal);
 
-        if (previousVal >0 && currentVal == 0) onEmpty?.Invoke();
-        
+        if (previousVal > 0 && currentVal == 0) onEmpty?.Invoke();
 
-        if (previousVal < maxVal && currentVal == maxVal) onFull?.Invoke();        
+
+        if (previousVal < maxVal && currentVal == maxVal) onFull?.Invoke();
 
     }
 
@@ -44,4 +44,4 @@ public class ProgressModel
         maxVal = newMax;
         onValueChanged?.Invoke(currentVal, maxVal);
     }
-}
+}}

@@ -1,9 +1,9 @@
 using UnityEngine;
 using System.Collections.Generic;
 using Unity.Cinemachine;
-using UnityEngine.UIElements;
 
 
+namespace Stats{
 public class LockOnLogic : MonoBehaviour
 {
     public Transform SearchableObject;
@@ -12,8 +12,8 @@ public class LockOnLogic : MonoBehaviour
     public GameObject lockonIcon;
     public List<Transform> lockOns = new List<Transform>();
     public CinemachineCamera cam;
-    [SerializeField]private int range;
-    [SerializeField] private int index=0;
+    [SerializeField] private int range;
+    [SerializeField] private int index = 0;
     public Transform lookAtTarget;
     public BasicController controller;
     public void Start()
@@ -45,19 +45,19 @@ public class LockOnLogic : MonoBehaviour
     }
     public void Update()
     {
-        if (Input.GetKeyDown(KeyCode.R)) 
-        {   
+        if (Input.GetKeyDown(KeyCode.R))
+        {
 
             index++;
 
             if (index >= lockOns.Count)
                 index = 0;
 
-            if (index == 0){
+            if (index == 0) {
                 lookAtTarget = player; // default
                 controller.lockedOn = false;
             }
-            else{
+            else {
                 lookAtTarget = lockOns[index];
                 controller.lockedOn = true;
                 controller.targetLock = lookAtTarget;
@@ -67,4 +67,5 @@ public class LockOnLogic : MonoBehaviour
 
         }
     }
+}
 }

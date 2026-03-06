@@ -1,12 +1,13 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-
-public class triggerListener : MonoBehaviour
+namespace Stats
+{
+    public class triggerListener : MonoBehaviour
 {
     public listHolder ListMan;
     public List<GameObject> explosions;
-    
+
     public string Tag = "Attack";
     public int index = 0;
     List<ParticleCollisionEvent> PList = new();
@@ -34,5 +35,5 @@ public class triggerListener : MonoBehaviour
         }
     }
 
-    
-}
+
+}}
